@@ -3,7 +3,10 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "db:generate": "bunx --bun drizzle-kit generate",
+    "db:migrate": "bunx --bun drizzle-kit migrate",
+    "db:seed": "bun run src/db/seed.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.3",
