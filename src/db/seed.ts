@@ -1,10 +1,13 @@
 import { db } from "./index";
-import { stops, stopPoints } from "./schema";
+import { buses, stops, stopPoints } from "./schema";
 
 const FACULTY_NAMES = Array.from({ length: 10 }, (_, i) => `Fakultas ${i + 1}`);
 const STOP_NAMES = ["Gerbang Kampus", ...FACULTY_NAMES, "Titik Akhir"];
 
 async function seed() {
+  console.log("Seeding buses...");
+  await db.insert(buses).values({ name: "Bus 1", type: "campus" });
+
   console.log("Seeding stops...");
 
   for (let i = 0; i < STOP_NAMES.length; i++) {
@@ -35,7 +38,7 @@ async function seed() {
     });
   }
 
-  console.log(`Seeded ${STOP_NAMES.length} stops (${STOP_NAMES.length * 2} stop points).`);
+  console.log(`Seeded 1 bus, ${STOP_NAMES.length} stops (${STOP_NAMES.length * 2} stop points).`);
   process.exit(0);
 }
 
