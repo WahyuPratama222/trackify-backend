@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { TripsService } from "./service";
+import { TripService } from "./service";
 import { startTripBody, tripParams, finishTripParams } from "./model";
 
 export const trips = new Elysia({ prefix: "/buses/:busId/trips" })
@@ -7,7 +7,7 @@ export const trips = new Elysia({ prefix: "/buses/:busId/trips" })
     "/start",
     async ({ params, body, set }) => {
       try {
-        return await TripsService.start(params.busId, body.direction);
+        return await TripService.start(params.busId, body.direction);
       } catch (err) {
         set.status = 409;
         return { error: (err as Error).message };
@@ -19,7 +19,7 @@ export const trips = new Elysia({ prefix: "/buses/:busId/trips" })
     "/:tripId/finish",
     async ({ params, set }) => {
       try {
-        return await TripsService.finish(params.busId, params.tripId);
+        return await TripService.finish(params.busId, params.tripId);
       } catch (err) {
         set.status = err instanceof Error && err.message === "Trip not found" ? 404 : 409;
         return { error: (err as Error).message };
