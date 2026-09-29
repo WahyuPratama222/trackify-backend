@@ -2,7 +2,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "./../db";
 import { trips } from "./../db/schema";
 
-export const TripsService = {
+export const TripService = {
   async start(busId: number, direction: "forward" | "reverse") {
     // Reject if this bus already has an ongoing trip
     const [active] = await db
