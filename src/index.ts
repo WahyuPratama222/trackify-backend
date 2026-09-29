@@ -2,13 +2,16 @@ import { Elysia } from 'elysia';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { trips } from "./trips";
-import { location } from './locations';
+import { locations } from "./locations";
+import { buses } from "./buses";
+
 
 const app = new Elysia()
   .get('/', () => 'Trackify is running! ⚡')
   .get('/health', () => ({ status: 'ok' }))
   .use(trips)
-  .use(location)
+  .use(locations)
+  .use(buses)
   .listen(3000);
 
 const queryClient = postgres(process.env.DATABASE_URL!);
