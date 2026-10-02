@@ -10,7 +10,7 @@ function buildBusInfo(bus: typeof buses.$inferSelect, meta: Record<string, strin
   const isStale = !updatedAt || Date.now() - new Date(updatedAt).getTime() > OFFLINE_THRESHOLD_MS;
 
   return {
-    busId: bus.id,
+    id: bus.id,
     type: bus.type,
     tripId: Number(meta.tripId),
     direction: meta.direction,
@@ -30,13 +30,16 @@ export const BusService = {
       .innerJoin(buses, eq(trips.busId, buses.id))
       .where(eq(trips.status, "ongoing"));
 
-    const result = [];
-    for (const row of ongoing) {
-      const meta = await redis.hgetall(`bus:${row.buses.id}:meta`);
-      if (Object.keys(meta).length === 0) continue; // no location sent yet
-      result.push(buildBusInfo(row.buses, meta));
-    }
-    return result;
+    // Fetch all metas in parallel instead of one by one
+    const metas = await Promise.all(
+      ongoing.map((row) => redis.hgetall(`bus:${row.buses.id}:meta`))
+    );
+
+    return ongoing.flatMap((row, i) => {
+      // Skip if no location yet, or if the meta belongs to a previous trip
+      if (Number(metas[i].tripId) !== row.trips.id) return [];
+      return [buildBusInfo(row.buses, metas[i])];
+    });
   },
 
   async getOne(busId: number) {
@@ -49,7 +52,9 @@ export const BusService = {
     if (!row) throw new Error("Bus not found or has no active trip");
 
     const meta = await redis.hgetall(`bus:${busId}:meta`);
-    if (Object.keys(meta).length === 0) throw new Error("Bus not found or has no active trip");
+    if (Number(meta.tripId) !== row.trips.id) {
+      throw new Error("Bus not found or has no active trip");
+    }
 
     return buildBusInfo(row.buses, meta);
   },
