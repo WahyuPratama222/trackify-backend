@@ -16,7 +16,7 @@ export const StopService = {
       );
 
       return {
-        stopId: stop.id,
+        id: stop.id,
         name: stop.name,
         seq: { forward: forward?.seq, reverse: reverse?.seq },
         points: {

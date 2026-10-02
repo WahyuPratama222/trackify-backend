@@ -8,6 +8,13 @@
       "when": 1790489409371,
       "tag": "0000_tiny_skreet",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790863548214,
+      "tag": "0001_ancient_meteorite",
+      "breakpoints": true
     }
   ]
 }
