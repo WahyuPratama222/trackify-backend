@@ -14,18 +14,19 @@ export const LocationService = {
     if (!trip) throw new Error("Trip not found");
     if (trip.status !== "ongoing") throw new Error("Trip is not ongoing");
 
-    // Store the current position as a geo point, keyed by bus id
+    // Use one timestamp for both Redis and the response
+    const now = new Date().toISOString();
+
     await redis.geoadd("buses:location", lng, lat, String(busId));
 
-    // Store metadata separately, since geo keys can't hold extra fields
     await redis.hset(`bus:${busId}:meta`, {
       tripId,
       direction: trip.direction,
       lat,
       lng,
-      updatedAt: new Date().toISOString(),
+      updatedAt: now,
     });
 
-    return { busId, tripId, lat, lng, recordedAt: new Date().toISOString() };
+    return { busId, tripId, lat, lng, recordedAt: now };
   },
 };
